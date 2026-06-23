@@ -1,0 +1,29 @@
+name : CI
+
+on :
+  push :
+   branches : [main]
+  pull_request :
+   branches : [main]
+  
+jobs :
+  build_and_lint:
+    runs-on : Ubuntu_latest
+
+    steps :
+    - name : Checkout code
+      uses : actions/checkout@v4
+
+    - name : Setup Node.js 
+      uses : actions/setup_node@v4
+      with :
+         node_version : 24
+      
+    - name : Install dependencies
+      run : npm Install
+
+    - name : Run Linter
+      run : npm run lint 
+    
+    - name : Build Project
+      run  : npm run build 
