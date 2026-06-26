@@ -9,7 +9,7 @@ const Login = () => {
   return (
     <>
       <div className="mb-6 text-center">
-        <h2 className="text-2xl font-semibold text-gray-900">Welcome back</h2>
+<h2 className="font-display text-2xl font-medium text-gray-900">Welcome back</h2>
         <p className="mt-1 text-sm text-gray-500">Log in to continue</p>
       </div>
 

@@ -85,7 +85,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                             >
                               <Minus size={14} />
                             </button>
-                            <span className="text-xs font-medium text-gray-900">
+                            <span className="font-price text-xs font-medium text-gray-900 tabular-nums">
                               {item.quantity}
                             </span>
                             <button
@@ -95,7 +95,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                               <Plus size={14} />
                             </button>
                           </div>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="font-price text-sm font-medium text-gray-900 tabular-nums">
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
                         </div>
@@ -110,7 +110,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
               <div className="border-t border-gray-100 px-6 py-5">
                 <div className="mb-4 flex items-center justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-price font-medium text-gray-900 tabular-nums">
                     ${subtotal.toFixed(2)}
                   </span>
                 </div>

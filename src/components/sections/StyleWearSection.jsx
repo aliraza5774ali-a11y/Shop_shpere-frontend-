@@ -77,7 +77,7 @@ const styleCards2 = [
     id: 1,
     title: "Daily Essentials",
     description:
-      "Core clothing pieces designed for frequent wear across modern everyday routines.",
+      "Core clothing pieces designed for frequent wear across everyday routines.",
     style01: style31,
     style02: style32,
     features: [
@@ -133,13 +133,13 @@ const StyleWearSection = () => {
           versatility for everyday living across lifestyles.
         </p>
       </div>
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-4">
           {styleCards1.map((card) => (
             <StyleCard key={card.id} card={card} />
           ))}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           {styleCards2.map((card) => (
             <StyleCard key={card.id} card={card} />
           ))}

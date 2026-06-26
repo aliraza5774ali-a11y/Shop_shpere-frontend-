@@ -12,6 +12,7 @@ const HeroSection = ({
   primaryLabel = "See Collection",
   secondaryLink = "/contact",
   secondaryLabel = "Contact us",
+  isHero = true,
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -29,7 +30,7 @@ const HeroSection = ({
   }, [isPaused, goToNext, isSlider]);
 
   return (
-    <section className="relative flex h-screen flex-col items-center justify-center overflow-hidden">
+    <section className={`relative flex flex-col items-center justify-center overflow-hidden ${isHero ? 'h-screen' : 'h-[570px]'}`}>
       {/* Images */}
       <div className="absolute inset-0">
         {images.map((img, index) => (
@@ -40,27 +41,40 @@ const HeroSection = ({
             className="absolute inset-0 h-full w-full object-cover transition-opacity duration-900 ease-in-out"
             style={{
               opacity: index === activeIndex ? 1 : 0,
-              transform: "scale(1.12)",
             }}
           />
         ))}
       </div>
 
       {/* Overlays */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(110deg,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.08) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(0deg,rgba(0,0,0,0.80) 0%,transparent 50%)",
-        }}
-      />
+<div
+  className="absolute inset-0"
+  style={{
+    background:
+      "linear-gradient(110deg,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.08) 100%)",
+  }}
+/>
+<div
+  className="absolute inset-0"
+  style={{
+    background:
+      "linear-gradient(0deg,rgba(0,0,0,0.80) 0%,transparent 50%)",
+  }}
+/>
+
+{!isHero && (
+  <div
+    className="absolute bottom-0 left-0 right-0 z-10"
+    style={{
+      height: '120px',
+      background: "linear-gradient(to top, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.12) 40%, rgba(255,255,255,0) 100%)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      maskImage: "linear-gradient(to top, black 0%, black 30%, transparent 100%)",
+      WebkitMaskImage: "linear-gradient(to top, black 0%, black 30%, transparent 100%)",
+    }}
+  />
+)}
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center px-6 text-center mt-24">
@@ -80,12 +94,12 @@ const HeroSection = ({
           </div>
         )}
 
-        <h1 className="mt-6 text-5xl font-semibold leading-[1.1] text-white sm:text-6xl">
+        <h1 className="font-display tabular-nums mt-6 text-5xl font-semibold leading-[1.1] text-white sm:text-6xl">
           {heading}
         </h1>
 
         {subtext && (
-          <p className="mt-4 max-w-md text-sm text-white/70 leading-relaxed">
+          <p className="font-sans mt-4 max-w-md text-sm text-white/70 leading-relaxed">
             {subtext}
           </p>
         )}

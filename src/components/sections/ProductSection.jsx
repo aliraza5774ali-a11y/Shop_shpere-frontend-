@@ -12,81 +12,66 @@ import img42 from "../../assets/product-05.avif";
 import img51 from "../../assets/product_06.avif";
 import img52 from "../../assets/product-06.avif";
 import SampleProduct from "../SampleProduct";
+import SectionHeader from "../SectionHeader";
 
 const ProductSection = () => {
   return (
     <section className="bg-[#f8f8f8] px-28 pt-10 py-18 flex flex-col gap-10 ">
-      <div className="flex items-end justify-between">
-        {/* Left: badge + heading */}
-        <div className="flex flex-col gap-4">
-          {/* Badge */}
-          <span className="inline-flex items-center gap-2 self-start rounded-full border border-black/10 bg-white   text-xs font-medium text-black shadow-sm">
-            <p className="bg-black rounded-full p-2 text-white">
-              <LuSparkles size={13} className="" />
-            </p>
-            <span className="pr-2">New Arrivals</span>
-          </span>
-
-          {/* Heading */}
-          <h2 className="text-4xl font-semibold leading-tight tracking-wider text-black">
+      <SectionHeader
+        badge="New Arrivals"
+        icon={<LuSparkles size={13} />}
+        heading={
+          <>
             Fresh fits in <br /> our latest drop
-          </h2>
-        </div>
+          </>
+        }
+        ctaLabel="See all collections"
+        ctaLink="/collection"
+      />
 
-        {/* Right: CTA button */}
-        <button className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800">
-          See all collections
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-10 ">
-        <div className="flex items-center justify-center gap-4">
-          <SampleProduct
-            img1={img01}
-            img2={img02}
-            title="Textured Knitted Shirt"
-            price="$59.00"
-            discount="&79.00"
-          />
-          <SampleProduct
-            img1={img11}
-            img2={img12}
-            title="Textured Knitted Shirt"
-            price="$59.00"
-            discount="&79.00"
-          />
-          <SampleProduct
-            img1={img21}
-            img2={img22}
-            title="Textured Knitted Shirt"
-            price="$59.00"
-            discount="&79.00"
-          />
-        </div>
-
-        <div className="flex items-center justify-center gap-4">
-          <SampleProduct
-            img1={img31}
-            img2={img32}
-            title="Textured Knitted Shirt"
-            price="$59.00"
-            discount="&79.00"
-          />
-          <SampleProduct
-            img1={img41}
-            img2={img42}
-            title="Textured Knitted Shirt"
-            price="$59.00"
-            discount="&79.00"
-          />
-          <SampleProduct
-            img1={img51}
-            img2={img52}
-            title="Textured Knitted Shirt"
-            price="$59.00"
-            discount="&79.00"
-          />
-        </div>
+      <div className="grid grid-cols-3 gap-6">
+        <SampleProduct
+          img1={img01}
+          img2={img02}
+          title="Textured Knitted Shirt"
+          price="$59.00"
+          discount="$79.00"
+        />
+        <SampleProduct
+          img1={img11}
+          img2={img12}
+          title="Relaxed Linen Overshirt"
+          price="$69.00"
+          discount="$89.00"
+        />
+        <SampleProduct
+          img1={img21}
+          img2={img22}
+          title="Minimal Utility Jacket"
+          price="$99.00"
+          discount="$129.00"
+        />
+        <SampleProduct
+          img1={img31}
+          img2={img32}
+          title="Soft Fleece Pullover"
+          price="$79.00"
+          discount="$99.00"
+        />
+        <SampleProduct
+          img1={img41}
+          img2={img42}
+          title="Essential Cargo Trouser"
+          price="$89.00"
+          discount="$109.00"
+        />
+        <SampleProduct
+          img1={img51}
+          img2={img52}
+          title="Cotton Everyday Tee"
+          price="$39.00"
+          discount="$55.00"
+        />
       </div>
     </section>
   );

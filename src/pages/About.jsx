@@ -1,5 +1,7 @@
 import hero1 from "../assets/aboutImage.avif";
+import AboutSection from "../components/sections/AboutSection";
 import HeroSection from "../components/sections/HeroSection";
+import PartnersSection from "../components/sections/PartnerSection";
 
 const About = () => {
   return (
@@ -17,7 +19,10 @@ const About = () => {
         subtext="We focus on creating essential garments that remain relevant, functional, and refined across seasons."
         primaryLabel="Browse Collection"
         secondaryLabel="Contact us"
+        isHero={false}
       />
+      <PartnersSection/>
+      <AboutSection/>
     </div>
   );
 };

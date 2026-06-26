@@ -21,7 +21,7 @@ const VideoSection = () => {
         playsInline
         muted
         autoPlay
-        className="absolutae inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
         style={{ objectPosition: "50% 50%" }}
       />
 
@@ -35,7 +35,7 @@ const VideoSection = () => {
           style={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
         >
           <div className="rounded-full bg-white px-2">
-            <span className="text-xs font-medium tracking-tight text-black">
+            <span className="font-display text-xs font-medium tracking-tight text-black">
               Wearix
             </span>
           </div>
@@ -47,7 +47,7 @@ const VideoSection = () => {
         {/* Text */}
         <div className="mt-6 max-w-xl">
           <h2
-            className="text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl"
+            className="font-display text-3xl font-medium text-white sm:text-4xl md:text-5xl"
             style={{ textWrap: "balance" }}
           >
             Defining modern style

@@ -20,6 +20,7 @@ const NAV_LINKS = [
   { name: "ABOUT", path: "/about" },
   { name: "SHOP", path: "/shops" },
   { name: "COLLECTION", path: "/collections" },
+  {name : 'BLOG', path : '/blog'},
   { name: "CONTACT", path: "/contact" },
 ];
 
@@ -47,13 +48,13 @@ const Navbar = () => {
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <Link
           to="/"
-          className={`cursor-pointer text-[24px] font-semibold transition-all duration-200 ${
+          className={`cursor-pointer font-display text-[24px] font-semibold transition-all duration-200 ${
             isScrolled
               ? "text-black hover:text-black/60"
               : "text-white hover:text-white/70"
           }`}
         >
-          WEARIX
+          VELOUR
         </Link>
 
         <div className="flex items-center">
@@ -63,7 +64,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative px-4 py-2 text-[14px] font-medium uppercase tracking-[0.06em] no-underline transition-colors duration-200 after:absolute after:bottom-1 after:left-4 after:right-4 after:h-px after:origin-left after:bg-[#c9a96e] after:transition-transform after:duration-200 after:content-[''] ${
+                className={`relative px-4 py-2 font-mono text-[13px] uppercase tracking-[0.06em] no-underline transition-colors duration-200 after:absolute after:bottom-1 after:left-4 after:right-4 after:h-px after:origin-left after:bg-[#c9a96e] after:transition-transform after:duration-200 after:content-[''] ${
                   isActive
                     ? `after:scale-x-100 ${isScrolled ? "text-black" : "text-white"}`
                     : `after:scale-x-0 ${isScrolled ? "text-black/70 hover:text-black" : "text-white/80 hover:text-white"} hover:after:scale-x-100`

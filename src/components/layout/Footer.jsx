@@ -8,7 +8,7 @@ const Footer = () => {
         {/* Brand + Newsletter */}
         <div className="flex flex-col gap-6 max-w-sm">
           <div className="flex flex-col gap-2">
-            <h2 className="text-3xl font-semibold tracking-wide">WEARIX</h2>
+            <h2 className="text-3xl font-semibold tracking-wide">VELOUR</h2>
             <p className="text-sm text-white/50 leading-relaxed">
               Minimal luxury for those who dress with intention. Curated drops,
               timeless pieces.
@@ -102,7 +102,7 @@ const Footer = () => {
       {/* Bottom — Legal + Socials */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-white/30">
-          © 2026 Wearix. All rights reserved.
+          © 2026 VELOUR. All rights reserved.
         </p>
 
         <div className="flex items-center gap-5">
