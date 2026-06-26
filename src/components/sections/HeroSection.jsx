@@ -1,42 +1,52 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import img1 from "../../assets/hero_01.avif";
-import img2 from "../../assets/hero_02.avif";
-import img3 from "../../assets/hero_03.avif";
-import img4 from "../../assets/hero_04.avif";
-import img5 from "../../assets/hero_05.avif";
+const AUTOPLAY_INTERVAL = 6000;
 
-const HERO_IMAGES = [img1, img2, img3, img4, img5];
-const AUTOPLAY_INTERVAL = 6000; // ms
-
-const HeroSection = () => {
+const HeroSection = ({
+  images = [],
+  badge,
+  heading,
+  subtext,
+  primaryLink = "/shops",
+  primaryLabel = "See Collection",
+  secondaryLink = "/contact",
+  secondaryLabel = "Contact us",
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  const isSlider = images.length > 1;
+
   const goToNext = useCallback(() => {
-    setActiveIndex((i) => (i + 1) % HERO_IMAGES.length);
-  }, []);
+    setActiveIndex((i) => (i + 1) % images.length);
+  }, [images.length]);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (!isSlider || isPaused) return;
     const timer = setInterval(goToNext, AUTOPLAY_INTERVAL);
     return () => clearInterval(timer);
-  }, [isPaused, goToNext]);
+  }, [isPaused, goToNext, isSlider]);
 
   return (
     <section className="relative flex h-screen flex-col items-center justify-center overflow-hidden">
+      {/* Images */}
       <div className="absolute inset-0">
-        {HERO_IMAGES.map((img, index) => (
+        {images.map((img, index) => (
           <img
             key={index}
             src={img}
             alt=""
             className="absolute inset-0 h-full w-full object-cover transition-opacity duration-900 ease-in-out"
-            style={{ opacity: index === activeIndex ? 1 : 0 }}
+            style={{
+              opacity: index === activeIndex ? 1 : 0,
+              transform: "scale(1.12)",
+            }}
           />
         ))}
       </div>
+
+      {/* Overlays */}
       <div
         className="absolute inset-0"
         style={{
@@ -52,85 +62,99 @@ const HeroSection = () => {
         }}
       />
 
-      <div className="relative z-10 flex flex-col items-center px-6 text-center">
-        <div className="flex items-center gap-2 rounded-full bg-black/20 p-1 pr-3 backdrop-blur-md">
-          <button className="rounded-full bg-white px-3 py-1 text-sm font-medium text-black">
-            Soft
-          </button>
-          <span className="text-sm font-medium text-white">
-            Warm Winter Layers
-          </span>
-        </div>
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center px-6 text-center mt-24">
+        {badge && (
+          <div
+            className="inline-flex items-center gap-2 rounded-full backdrop-blur-sm"
+            style={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+          >
+            <div className="rounded-full bg-white px-3 py-1">
+              <span className="text-xs font-medium text-black">
+                {badge.label}
+              </span>
+            </div>
+            <span className="text-xs font-medium text-white/90 pr-3 py-1">
+              {badge.text}
+            </span>
+          </div>
+        )}
 
         <h1 className="mt-6 text-5xl font-semibold leading-[1.1] text-white sm:text-6xl">
-          Premium wear
-          <br />
-          for modern living
+          {heading}
         </h1>
 
-        <p className="mt-5 max-w-md text-base text-white/80">
-          Discover our new range of soft clothes made for your daily look and
-          your best days with the finest fabrics.
-        </p>
+        {subtext && (
+          <p className="mt-4 max-w-md text-sm text-white/70 leading-relaxed">
+            {subtext}
+          </p>
+        )}
 
         <div className="mt-8 flex items-center gap-3">
           <Link
-            to="/shops"
-            className="rounded-full bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-gray-100"
+            to={primaryLink}
+            className="rounded-full bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
           >
-            See collection
+            {primaryLabel}
           </Link>
           <Link
-            to="/contact"
-            className="rounded-full border border-white/30 bg-black/20 px-6 py-2.5 text-sm font-medium text-white backdrop-blur-md transition hover:bg-black/30"
+            to={secondaryLink}
+            className="rounded-full px-6 py-2.5 text-sm font-medium text-white border border-white/30 backdrop-blur-sm transition hover:bg-white/10"
           >
-            Contact us
+            {secondaryLabel}
           </Link>
         </div>
       </div>
 
-      <div
-        className="absolute right-6 top-1/2 z-10 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-10"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        {HERO_IMAGES.map((img, index) => {
-          const isActive = index === activeIndex;
-          return (
-            <button
-              key={index}
-              onClick={() => setActiveIndex(index)}
-              aria-label={`View look ${index + 1}`}
-              className="group flex items-center gap-3"
-            >
-              <span
-                className={`overflow-hidden rounded-md transition-all duration-300 ${
-                  isActive ? "h-14 w-10 opacity-100" : "h-0 w-0 opacity-0"
-                }`}
+      {/* Slider controls — only when multiple images */}
+      {isSlider && (
+        <div
+          className="absolute right-6 top-1/2 z-10 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-10"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {images.map((img, index) => {
+            const isActive = index === activeIndex;
+            return (
+              <button
+                key={index}
+                onClick={() => setActiveIndex(index)}
+                aria-label={`View look ${index + 1}`}
+                className="group flex items-center gap-3"
               >
-                <img src={img} alt="" className="h-full w-full object-cover" />
-              </span>
-              <span
-                className={`font-serif tabular-nums transition-all duration-300 ${
-                  isActive
-                    ? "text-3xl text-white"
-                    : "text-base text-white/40 group-hover:text-white/70"
-                }`}
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
-            </button>
-          );
-        })}
-        <div className="mt-1 h-16 w-px bg-white/20">
-          <div
-            className="w-px bg-white transition-all duration-500"
-            style={{
-              height: `${((activeIndex + 1) / HERO_IMAGES.length) * 100}%`,
-            }}
-          />
+                <span
+                  className={`overflow-hidden rounded-md transition-all duration-300 ${
+                    isActive ? "h-14 w-10 opacity-100" : "h-0 w-0 opacity-0"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+                <span
+                  className={`font-serif tabular-nums transition-all duration-300 ${
+                    isActive
+                      ? "text-3xl text-white"
+                      : "text-base text-white/40 group-hover:text-white/70"
+                  }`}
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </button>
+            );
+          })}
+          <div className="mt-1 h-16 w-px bg-white/20">
+            <div
+              className="w-px bg-white transition-all duration-500"
+              style={{
+                height: `${((activeIndex + 1) / images.length) * 100}%`,
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 };

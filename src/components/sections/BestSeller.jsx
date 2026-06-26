@@ -1,4 +1,3 @@
-import { LuSparkles } from "react-icons/lu";
 import img01 from "../../assets/product_01.avif";
 import img02 from "../../assets/product-01.avif";
 import img11 from "../../assets/product_02.avif";
@@ -12,24 +11,23 @@ import img42 from "../../assets/product-05.avif";
 import img51 from "../../assets/product_06.avif";
 import img52 from "../../assets/product-06.avif";
 import SampleProduct from "../SampleProduct";
+import { Crown } from "lucide-react";
 
-const ProductSection = () => {
+const BestSeller = () => {
   return (
-    <section className="bg-[#f8f8f8] px-28 pt-10 py-18 flex flex-col gap-10 ">
+    <section className="bg-[#f8f8f8] px-28 pt-20 py-18 flex flex-col gap-10 ">
       <div className="flex items-end justify-between">
         {/* Left: badge + heading */}
         <div className="flex flex-col gap-4">
           {/* Badge */}
           <span className="inline-flex items-center gap-2 self-start rounded-full border border-black/10 bg-white   text-xs font-medium text-black shadow-sm">
-            <p className="bg-black rounded-full p-2 text-white">
-              <LuSparkles size={13} className="" />
-            </p>
-            <span className="pr-2">New Arrivals</span>
+            <p className="bg-black rounded-full p-2 text-white"><Crown size={13} className=""/></p>
+            <span className="pr-2">Best Seller</span>
           </span>
 
           {/* Heading */}
           <h2 className="text-4xl font-semibold leading-tight tracking-wider text-black">
-            Fresh fits in <br /> our latest drop
+            Our Signature <br /> best selling pieces
           </h2>
         </div>
 
@@ -92,4 +90,4 @@ const ProductSection = () => {
   );
 };
 
-export default ProductSection;
+export default BestSeller;

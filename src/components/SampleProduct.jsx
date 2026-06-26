@@ -9,42 +9,36 @@ const SampleProduct = ({ img1, img2, title, price, discount }) => {
     <div className="w-120 flex flex-col gap-3 cursor-pointer">
       {/* Image Card */}
       <div
-        className="relative bg-[#ebebeb] rounded-xl p-6 flex items-center justify-center h-105"
+        className="relative bg-[#ebebeb] rounded-xl overflow-hidden flex items-center justify-center h-105"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
         {/* Badge */}
-        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-white rounded-full px-3 py-1 text-xs font-medium text-black shadow-sm">
+        <span className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 bg-white rounded-full px-3 py-1 text-xs font-medium text-black shadow-sm">
           <LuSparkles size={11} />
           New
         </span>
+
+        {/* Image fills entire card */}
         <img
           src={hovered ? img2 : img1}
           alt="Textured Knitted Shirt"
-          className="w-full h-full object-cover transition-opacity duration-300"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
         />
+
+        {/* Arrow button */}
         <div
-          className={`absolute top-3 right-5 w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 ${
+          className={`absolute top-3 right-3 z-10 w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 ${
             hovered ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
         >
-          {/* Arrow that flies out top-right */}
           <ArrowRight
             size={20}
-            className={`absolute transition-all duration-300 -rotate-45 ${
-              hovered
-                ? "-translate-x-5 translate-y-5 opacity-0"
-                : "translate-x-0 translate-y-0 opacity-100"
-            }`}
+            className={`absolute transition-all duration-300 -rotate-45 ${hovered ? "-translate-x-5 translate-y-5 opacity-0" : "translate-x-0 translate-y-0 opacity-100"}`}
           />
-          {/* Arrow that enters from bottom-left */}
           <ArrowRight
             size={20}
-            className={`absolute transition-all duration-300 -rotate-45 ${
-              hovered
-                ? "translate-x-0 translate-y-0 opacity-100"
-                : "translate-x-5 -translate-y-5 opacity-0"
-            }`}
+            className={`absolute transition-all duration-300 -rotate-45 ${hovered ? "translate-x-0 translate-y-0 opacity-100" : "translate-x-5 -translate-y-5 opacity-0"}`}
           />
         </div>
       </div>
