@@ -1,19 +1,40 @@
-// import { useState } from "react";
-
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { openSignUp } from "../../store/slice/Uislice";
+import { useNavigate } from "react-router-dom";
+import { openSignUp, closeAuth } from "../../store/slice/Uislice";
+import { login } from "../../store/slice/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
-  // const [isSignUp,setIsSignUp] = useState(false)
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!email.trim() || !password.trim()) {
+      setError("Enter your email and password to continue.");
+      return;
+    }
+
+    // Role is resolved inside authSlice based on credentials
+    dispatch(login({ email, password }));
+    dispatch(closeAuth());
+    navigate("/dashboard");
+  };
+
   return (
     <>
       <div className="mb-6 text-center">
-<h2 className="font-display text-2xl font-medium text-gray-900">Welcome back</h2>
+        <h2 className="font-display text-2xl font-medium text-gray-900">
+          Welcome back
+        </h2>
         <p className="mt-1 text-sm text-gray-500">Log in to continue</p>
       </div>
 
-      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
           <label
             htmlFor="email"
@@ -24,6 +45,8 @@ const Login = () => {
           <input
             id="email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-1 focus:ring-gray-900"
           />
@@ -47,10 +70,14 @@ const Login = () => {
           <input
             id="password"
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-1 focus:ring-gray-900"
           />
         </div>
+
+        {error && <p className="text-xs text-red-500">{error}</p>}
 
         <button
           type="submit"
@@ -73,25 +100,12 @@ const Login = () => {
           className="flex flex-1 items-center justify-center rounded-xl border border-gray-200 py-2.5 transition hover:bg-gray-50"
         >
           <svg width="20" height="20" viewBox="0 0 48 48">
-            <path
-              fill="#FFC107"
-              d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 35 24 35c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.4-.4-3.5z"
-            />
-            <path
-              fill="#FF3D00"
-              d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.6 7.1 29.6 5 24 5c-7.6 0-14.1 4.3-17.7 9.7z"
-            />
-            <path
-              fill="#4CAF50"
-              d="M24 43c5.4 0 10.2-2 13.9-5.4l-6.4-5.4C29.4 33.8 26.8 35 24 35c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.8 38.6 16.3 43 24 43z"
-            />
-            <path
-              fill="#1976D2"
-              d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.4 5.4C40.9 36.4 44 30.8 44 24c0-1.2-.1-2.4-.4-3.5z"
-            />
+            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 35 24 35c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.4-.4-3.5z" />
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.6 7.1 29.6 5 24 5c-7.6 0-14.1 4.3-17.7 9.7z" />
+            <path fill="#4CAF50" d="M24 43c5.4 0 10.2-2 13.9-5.4l-6.4-5.4C29.4 33.8 26.8 35 24 35c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.8 38.6 16.3 43 24 43z" />
+            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.4 5.4C40.9 36.4 44 30.8 44 24c0-1.2-.1-2.4-.4-3.5z" />
           </svg>
         </button>
-
         <button
           type="button"
           aria-label="Continue with Apple"
@@ -101,7 +115,6 @@ const Login = () => {
             <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.2-58.9.9-121.3 45.6-121.3 137 0 27 4.9 54.9 14.7 83.6 13.1 38.3 60.4 132.1 109.6 130.5 25.9-.7 44.1-18.4 77.9-18.4 32.8 0 49.6 18.4 78.5 18.4 49.7-.7 92.6-86.5 105-124.8-66.7-31.4-64.8-92-64.8-98.4zM257.9 70.6c25.5-30.4 23.2-58.1 22.4-68.1-22.5 1.3-48.6 15.4-63.4 33-16.3 18.8-25.9 42-23.8 67.9 24.4-1.9 46.6-13.9 64.8-32.8z" />
           </svg>
         </button>
-
         <button
           type="button"
           aria-label="Continue with Facebook"

@@ -10,6 +10,7 @@ import {
   openSearch,
   closeSearch,
 } from "../../store/slice/Uislice";
+import { selectCartTotalItems } from "../../store/slice/cartSlice";
 import AuthModal from "../auth/AuthModal";
 import CartSidebar from "../cart/CartSidebar";
 import SearchModal from "../searchModal";
@@ -30,6 +31,7 @@ const Navbar = () => {
   const authModal = useSelector((state) => state.ui.authModal);
   const isCartOpen = useSelector((state) => state.ui.isCartOpen);
   const isSearchOpen = useSelector((state) => state.ui.isSearchOpen);
+  const cartTotalItems = useSelector(selectCartTotalItems);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 const whiteNavbarPages = ["/checkout", "/cart", "/product", "/shop/:slug"];
@@ -125,10 +127,15 @@ const navbarSolid = isWhiteNavbar || isScrolled || isMobileMenuOpen;
             </button>
             <button
               onClick={() => dispatch(openCart())}
-              className={iconClass()}
+              className={`relative ${iconClass()}`}
               aria-label="Open cart"
             >
               <Handbag size={16} />
+              {cartTotalItems > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c9a96e] px-1 font-mono text-[10px] font-semibold leading-none text-black">
+                  {cartTotalItems > 99 ? "99+" : cartTotalItems}
+                </span>
+              )}
             </button>
             <button
               onClick={() => dispatch(openLogin())}

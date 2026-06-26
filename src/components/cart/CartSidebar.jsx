@@ -1,13 +1,22 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeFromCart,
+  selectCartItems,
+  selectCartSubtotal,
+  updateQuantity,
+} from "../../store/slice/cartSlice";
+import { useNavigate } from "react-router-dom";
+
+const parsePrice = (price) =>
+  typeof price === "number" ? price : parseFloat(String(price).replace(/[^0-9.]/g, "")) || 0;
 
 const CartSidebar = ({ isOpen, onClose }) => {
-  const items = useSelector((state) => state.cart?.items) || [];
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const items = useSelector(selectCartItems);
+  const subtotal = useSelector(selectCartSubtotal);
 
   return (
     <AnimatePresence>
@@ -53,55 +62,76 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 </div>
               ) : (
                 <div className="space-y-5">
-                  {items.map((item) => (
-                    <div key={item.id} className="flex gap-4">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="h-20 w-16 rounded-xl object-cover"
-                      />
-                      <div className="flex flex-1 flex-col">
-                        <div className="flex items-start justify-between">
-                          <p className="text-sm font-medium text-gray-900">
-                            {item.name}
-                          </p>
-                          <button
-                            aria-label="Remove item"
-                            className="text-gray-400 hover:text-gray-700"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                        {item.size && (
-                          <p className="mt-0.5 text-xs text-gray-500">
-                            Size: {item.size}
-                          </p>
-                        )}
-                        <div className="mt-2 flex items-center justify-between">
-                          <div className="flex items-center gap-3 rounded-full border border-gray-200 px-2 py-1">
+                  {items.map((item) => {
+                    const linePrice = parsePrice(item.price) * item.quantity;
+
+                    return (
+                      <div key={item.lineId} className="flex gap-4">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="h-20 w-16 rounded-xl object-cover"
+                        />
+                        <div className="flex flex-1 flex-col">
+                          <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-gray-900">
+                              {item.title}
+                            </p>
                             <button
-                              aria-label="Decrease quantity"
-                              className="text-gray-500 hover:text-gray-900"
+                              onClick={() => dispatch(removeFromCart(item.lineId))}
+                              aria-label="Remove item"
+                              className="text-gray-400 hover:text-gray-700"
                             >
-                              <Minus size={14} />
-                            </button>
-                            <span className="font-price text-xs font-medium text-gray-900 tabular-nums">
-                              {item.quantity}
-                            </span>
-                            <button
-                              aria-label="Increase quantity"
-                              className="text-gray-500 hover:text-gray-900"
-                            >
-                              <Plus size={14} />
+                              <Trash2 size={16} />
                             </button>
                           </div>
-                          <p className="font-price text-sm font-medium text-gray-900 tabular-nums">
-                            ${(item.price * item.quantity).toFixed(2)}
-                          </p>
+                          {item.size && (
+                            <p className="mt-0.5 text-xs text-gray-500">
+                              Size: {item.size}
+                            </p>
+                          )}
+                          <div className="mt-2 flex items-center justify-between">
+                            <div className="flex items-center gap-3 rounded-full border border-gray-200 px-2 py-1">
+                              <button
+                                onClick={() =>
+                                  dispatch(
+                                    updateQuantity({
+                                      lineId: item.lineId,
+                                      quantity: item.quantity - 1,
+                                    })
+                                  )
+                                }
+                                aria-label="Decrease quantity"
+                                className="text-gray-500 hover:text-gray-900"
+                              >
+                                <Minus size={14} />
+                              </button>
+                              <span className="font-price text-xs font-medium text-gray-900 tabular-nums">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  dispatch(
+                                    updateQuantity({
+                                      lineId: item.lineId,
+                                      quantity: item.quantity + 1,
+                                    })
+                                  )
+                                }
+                                aria-label="Increase quantity"
+                                className="text-gray-500 hover:text-gray-900"
+                              >
+                                <Plus size={14} />
+                              </button>
+                            </div>
+                            <p className="font-price text-sm font-medium text-gray-900 tabular-nums">
+                              ${linePrice.toFixed(2)}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -114,7 +144,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                     ${subtotal.toFixed(2)}
                   </span>
                 </div>
-                <button className="w-full rounded-xl bg-gray-900 py-3 text-sm font-medium text-white transition hover:bg-gray-800">
+                <button onClick={() => navigate('/checkout')} className="w-full rounded-xl bg-gray-900 py-3 text-sm font-medium text-white transition hover:bg-gray-800">
                   Checkout
                 </button>
               </div>

@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { openLogin } from "../../store/slice/Uislice";
+import { useNavigate } from "react-router-dom";
+import { openLogin, closeAuth } from "../../store/slice/Uislice";
+import { signup } from "../../store/slice/authSlice";
 
 const GoogleIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -46,11 +49,43 @@ const SocialButton = ({ icon: Icon, label }) => (
 
 const SignUp = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError("Fill in every field to create your account.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords don't match.");
+      return;
+    }
+    if (!agreed) {
+      setError("You need to accept the Terms of Service to continue.");
+      return;
+    }
+
+    setError("");
+    // TODO(backend): replace with a real POST /api/signup call — hash the
+    // password server-side, validate the email isn't already registered,
+    // and never persist plaintext passwords client-side. Signups always
+    // create a customer account; admin access is granted separately via
+    // the dedicated admin sign-in path on the Login screen.
+    dispatch(signup({ name, email, role: "customer" }));
+    dispatch(closeAuth());
+    navigate("/dashboard");
+  };
 
   return (
-    // KEY CHANGE: max-h-screen + overflow-y-auto on the inner container
-    // Your modal shell should be: fixed inset-0 flex items-center justify-center
-    // This inner div handles overflow if screen is very short
     <div className="flex max-h-screen flex-col overflow-y-auto py-1">
       <div className="mb-4 text-center">
         <h2 className="text-xl font-semibold text-gray-900">
@@ -61,7 +96,7 @@ const SignUp = () => {
         </p>
       </div>
 
-      <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-3" onSubmit={handleSubmit}>
         <div>
           <label
             htmlFor="name"
@@ -72,6 +107,8 @@ const SignUp = () => {
           <input
             id="name"
             type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Jane Doe"
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-1 focus:ring-gray-900"
           />
@@ -87,6 +124,8 @@ const SignUp = () => {
           <input
             id="signup-email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-1 focus:ring-gray-900"
           />
@@ -102,6 +141,8 @@ const SignUp = () => {
           <input
             id="signup-password"
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 8 characters"
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-1 focus:ring-gray-900"
           />
@@ -117,14 +158,50 @@ const SignUp = () => {
           <input
             id="confirm-password"
             type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Re-enter your password"
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-1 focus:ring-gray-900"
           />
         </div>
 
+        {/* Account type — explicit, no hardcoding. This is the one place
+            role gets set since there's no backend/admin invite system yet. */}
+        {/* <div>
+          <span className="mb-1 block text-xs font-medium text-gray-700">
+            Account type
+          </span>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setRole("customer")}
+              className={`rounded-xl border py-2 text-xs font-medium transition ${
+                role === "customer"
+                  ? "border-gray-900 bg-gray-900 text-white"
+                  : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Customer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("admin")}
+              className={`rounded-xl border py-2 text-xs font-medium transition ${
+                role === "admin"
+                  ? "border-gray-900 bg-gray-900 text-white"
+                  : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Admin
+            </button>
+          </div>
+        </div> */}
+
         <label className="flex items-start gap-2 text-xs text-gray-500">
           <input
             type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
             className="mt-0.5 h-3.5 w-3.5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
           />
           <span>
@@ -144,6 +221,8 @@ const SignUp = () => {
             </button>
           </span>
         </label>
+
+        {error && <p className="text-xs text-red-500">{error}</p>}
 
         <button
           type="submit"
