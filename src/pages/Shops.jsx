@@ -16,12 +16,7 @@ import img51 from "../assets/product_06.avif";
 import img52 from "../assets/product-06.avif";
 import { Leaf, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 
-const CATEGORIES = [
-  "All Products",
-  "Men's Wear",
-  "Women's Wear",
-  "Children's Wear",
-];
+const CATEGORIES = ["All Products", "Men's Wear", "Women's Wear", "Children's Wear"];
 
 const TRUST = [
   {
@@ -45,6 +40,7 @@ const TRUST = [
     desc: "SSL encrypted payments",
   },
 ];
+
 const ALL_PRODUCTS = [
   {
     img1: img01,
@@ -155,47 +151,47 @@ const Shops = () => {
   return (
     <div>
       <HeroSection
-        images={[hero01]}
-        badge={{ label: "Shop", text: "The new season" }}
-        heading={
-          <>
-            Elevate your daily
-            <br />
-            wardrobe with ease
-          </>
-        }
-        subtext="Explore our handpicked modern silhouettes crafted from the world's most sustainable fabrics."
-        primaryLabel="Explore Stories"
-        secondaryLabel="Contact us"
-        isHero={false}
-      />
+  mode="shop"
+  image={hero01}
+  badge={{ label: "Shop", text: "Curated for you" }}
+  heading="Find your perfect fit"
+  subtext="Browse our latest arrivals and timeless classics"
+  primaryLabel="New Arrivals"
+  secondaryLabel="Best Sellers"
+>
+  <div className="mt-6 flex w-full max-w-md items-center gap-2 rounded-full bg-white/10 px-4 py-3 backdrop-blur-md border border-white/10">
+    <svg className="h-5 w-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    <input
+      type="text"
+      placeholder="Search products..."
+      className="flex-1 bg-transparent text-sm text-white placeholder-white/40 outline-none"
+    />
+  </div>
+</HeroSection>
 
-      <div className="flex flex-col gap-10 px-28 py-16">
-        {/* Filter Bar */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 bg-[#eeeeee] rounded-full p-1.5 w-full">
-            {CATEGORIES.map((cat) => {
-              const isActive = active === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setActive(cat)}
-                  className={`flex-1 py-2 rounded-full text-lg font-medium transition-all duration-300 ${
-                    isActive
-                      ? "bg-black text-white shadow-sm"
-                      : "text-black bg-white hover:text-black"
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 py-10 sm:px-6 md:px-10 lg:px-16 xl:px-28">
+        <div className="w-full rounded-full bg-[#eeeeee] p-1.5">
+  <div className="flex w-full gap-2 overflow-x-auto sm:overflow-visible">
+    {CATEGORIES.map((cat) => (
+      <button
+        key={cat}
+        onClick={() => setActive(cat)}
+        className={`min-w-max flex-1 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 sm:px-5 sm:py-2.5 sm:text-base ${
+          active === cat
+            ? "bg-black text-white shadow-sm"
+            : "bg-white text-black hover:bg-black/5"
+        }`}
+      >
+        {cat}
+      </button>
+    ))}
+  </div>
+</div>
 
-        {/* Product Grid */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             {filtered.map((product, i) => (
               <SampleProduct
                 key={i}
@@ -208,8 +204,10 @@ const Shops = () => {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-32 gap-3">
-            <p className="text-2xl font-semibold text-black">No items found</p>
+          <div className="flex flex-col items-center justify-center py-20 sm:py-32 gap-3">
+            <p className="text-xl sm:text-2xl font-semibold text-black">
+              No items found
+            </p>
             <p className="text-sm text-black/40">
               Try selecting a different category
             </p>
@@ -217,27 +215,25 @@ const Shops = () => {
         )}
       </div>
 
-      {/* Load More */}
-      <div className="flex flex-col items-center gap-4 px-28">
+      <div className="flex flex-col items-center gap-4 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-28">
         <div className="flex items-center gap-4 w-full">
           <div className="flex-1 h-px bg-black/6" />
-          <button className="group flex items-center gap-2 px-8 py-3 cursor-pointer rounded-full border border-black/10 bg-white text-sm font-medium text-black hover:bg-black hover:text-white hover:border-black transition-all duration-300">
+          <button className="group flex items-center gap-2 px-6 sm:px-8 py-3 cursor-pointer rounded-full border border-black/10 bg-white text-sm font-medium text-black hover:bg-black hover:text-white hover:border-black transition-all duration-300">
             Load More
             <span className="w-1.5 h-1.5 rounded-full bg-black group-hover:bg-white transition-colors duration-300" />
           </button>
           <div className="flex-1 h-px bg-black/6" />
         </div>
-        <p className="text-xs text-black/30 font-medium">
+        <p className="text-xs text-black/30 font-medium text-center">
           Showing {filtered.length} of 48 products
         </p>
       </div>
 
-      {/* Trust Strip */}
-      <div className="grid grid-cols-4 gap-4 py-10 pt-4  px-28">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 py-10 pt-6 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-28">
         {TRUST.map((item, i) => (
           <div
             key={i}
-            className="flex flex-col items-center text-center gap-2 px-6 py-4 bg-[#f3f3f3] rounded-2xl"
+            className="flex flex-col items-center text-center gap-2 px-5 py-4 bg-[#f3f3f3] rounded-2xl"
           >
             <div className="text-2xl">{item.icon}</div>
             <p className="text-sm font-semibold text-black">{item.title}</p>

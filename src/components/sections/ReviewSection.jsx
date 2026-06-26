@@ -44,7 +44,7 @@ const REVIEWS = [
     logo: review22,
     name: "Liam Brooks",
     role: "Photographer",
-    text: "Finding clothes that last through many washes is hard. These pieces are exceptionally durable and strong. They hold their deep color and original shape.They hold their deep color and original shape.  Very reliable brand.",
+    text: "Finding clothes that last through many washes is hard. These pieces are exceptionally durable and strong. They hold their deep color and original shape. Very reliable brand.",
     bold: [
       "These pieces are exceptionally durable and strong.",
       "A great weekend choice.",
@@ -90,98 +90,96 @@ const ReviewSection = () => {
   const review = REVIEWS[active];
 
   return (
-    <section className="bg-[#f8f8f8] px-38 pt-10 pb-18 flex flex-col gap-10">
-      {/* Header */}
-      <div className="flex flex-col items-center text-center gap-4">
-        <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white text-xs font-medium text-black shadow-sm overflow-hidden">
-          <p className="bg-black rounded-full p-2 text-white">
-            <MessageCircleDashed size={13} />
-          </p>
-          <span className="pr-3">Customer Reviews</span>
-        </span>
-        <h2 className="text-4xl font-semibold leading-tight tracking-wide text-black">
-          The voice of quality
-        </h2>
-        <p className="text-sm text-black/50 leading-relaxed">
-          Experience the difference through the words of customers <br />
-          who value premium fabrics and timeless design.
-        </p>
-      </div>
-
-      <div className="bg-white rounded-3xl overflow-hidden flex flex-col">
-        {/* Top rating bar */}
-        <div className="px-4 pt-6">
-          <div className="inline-flex items-center gap-3 bg-[#f8f8f8] rounded-xl px-2 py-2">
-            <div className="flex items-center gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <LiaStarSolid
-                  key={i}
-                  size={16}
-                  className={
-                    i < Math.round(review.rating)
-                      ? "text-[#ff6a00]"
-                      : "text-black/10"
-                  }
-                />
-              ))}
-            </div>
-            <span className="text-[14px] font-medium text-black/70">
-              {review.rating}/5 from {review.reviewCount}k+ reviews
+    <section className="bg-[#f8f8f8] px-4 py-10 sm:px-6 md:px-10 lg:px-16 xl:px-28">
+      <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
+        <div className="flex flex-col items-center text-center gap-3 sm:gap-4">
+          <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white text-xs font-medium text-black shadow-sm overflow-hidden">
+            <span className="bg-black rounded-full p-2 text-white">
+              <MessageCircleDashed size={13} />
             </span>
-          </div>
+            <span className="pr-3">Customer Reviews</span>
+          </span>
+
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight tracking-wide text-black">
+            The voice of quality
+          </h2>
+
+          <p className="text-sm sm:text-base text-black/50 leading-relaxed max-w-2xl">
+            Experience the difference through the words of customers who value
+            premium fabrics and timeless design.
+          </p>
         </div>
 
-        {/* Review content */}
-        <div className="flex flex-col items-center text-center gap-8 px-16 py-12">
-          <img
-            src={review.logo}
-            alt="brand logo"
-            className="h-6 object-contain"
-          />
-          <p
-            className="text-[18px] leading-relaxed text-black/80 max-w-[700px] transition-all duration-300"
-            dangerouslySetInnerHTML={{
-              __html: highlightText(review.text, review.bold),
-            }}
-          />
-          <div className="flex items-center gap-3 py-2">
-            <div className="h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
-              <img
-                src={review.avatar}
-                alt={review.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold text-black">{review.name}</p>
-              <p className="text-xs text-black/40">{review.role}</p>
+        <div className="bg-white rounded-3xl overflow-hidden flex flex-col">
+          <div className="px-4 sm:px-6 pt-5 sm:pt-6">
+            <div className="inline-flex items-center gap-2 sm:gap-3 bg-[#f8f8f8] rounded-xl px-3 py-2">
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <LiaStarSolid
+                    key={i}
+                    size={16}
+                    className={
+                      i < Math.round(review.rating)
+                        ? "text-[#ff6a00]"
+                        : "text-black/10"
+                    }
+                  />
+                ))}
+              </div>
+              <span className="text-xs sm:text-sm font-medium text-black/70">
+                {review.rating}/5 from {review.reviewCount}k+ reviews
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* Logo selector — full width */}
-        <div className="flex items-stretch rounded-b-xl">
-          {REVIEWS.map((r, i) => (
-            <div key={i} className="flex items-stretch flex-1 gap-2">
+          <div className="flex flex-col items-center text-center gap-6 sm:gap-8 px-4 sm:px-8 md:px-12 lg:px-16 py-8 sm:py-10 md:py-12">
+            <img
+              src={review.logo}
+              alt="brand logo"
+              className="h-5 sm:h-6 object-contain"
+            />
+
+            <p
+              className="text-sm sm:text-base md:text-lg leading-relaxed text-black/80 max-w-3xl transition-all duration-300"
+              dangerouslySetInnerHTML={{
+                __html: highlightText(review.text, review.bold),
+              }}
+            />
+
+            <div className="flex items-center gap-3 py-2">
+              <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-full overflow-hidden flex-shrink-0">
+                <img
+                  src={review.avatar}
+                  alt={review.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-black">{review.name}</p>
+                <p className="text-xs text-black/40">{review.role}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex overflow-x-auto md:overflow-visible rounded-b-3xl scrollbar-hide">
+            {REVIEWS.map((r, i) => (
               <button
+                key={i}
                 onClick={() => setActive(i)}
-                className={`flex-1 flex items-center justify-center py-10 transition-all duration-300 ${
+                className={`min-w-[120px] sm:min-w-0 flex-1 flex items-center justify-center px-4 py-5 sm:py-8 md:py-10 transition-all duration-300 border-r last:border-r-0 border-black/5 ${
                   i === active ? "bg-black" : "bg-[#eeeeee] hover:bg-black/5"
                 }`}
               >
                 <img
                   src={r.logo}
                   alt={r.name}
-                  className={`h-5 object-contain transition-all duration-300 ${
-                    i === active ? " invert" : "bg-[#f8f8f8]"
+                  className={`h-4 sm:h-5 object-contain transition-all duration-300 ${
+                    i === active ? "invert" : ""
                   }`}
                 />
               </button>
-              {i < REVIEWS.length - 1 && (
-                <div className="w-px bg-black/[0.06] flex-shrink-0" />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

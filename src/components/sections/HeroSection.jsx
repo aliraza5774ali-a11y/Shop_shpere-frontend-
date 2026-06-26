@@ -1,10 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-const AUTOPLAY_INTERVAL = 6000;
-
 const HeroSection = ({
-  images = [],
+  image = "",
   badge,
   heading,
   subtext,
@@ -12,165 +10,352 @@ const HeroSection = ({
   primaryLabel = "See Collection",
   secondaryLink = "/contact",
   secondaryLabel = "Contact us",
-  isHero = true,
+  mode = "hero",
+  showScrollCue = true,
+  children,
 }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const isSlider = images.length > 1;
-
-  const goToNext = useCallback(() => {
-    setActiveIndex((i) => (i + 1) % images.length);
-  }, [images.length]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const sectionRef = useRef(null);
 
   useEffect(() => {
-    if (!isSlider || isPaused) return;
-    const timer = setInterval(goToNext, AUTOPLAY_INTERVAL);
-    return () => clearInterval(timer);
-  }, [isPaused, goToNext, isSlider]);
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
-  return (
-    <section className={`relative flex flex-col items-center justify-center overflow-hidden ${isHero ? 'h-screen' : 'h-[570px]'}`}>
-      {/* Images */}
-      <div className="absolute inset-0">
-        {images.map((img, index) => (
+  useEffect(() => {
+    if (mode !== "hero") return;
+    const handleMouseMove = (e) => {
+      if (!sectionRef.current || window.innerWidth < 1024) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+      const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+      setMousePos({ x: x * 10, y: y * 10 });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mode]);
+
+  // ─── HERO MODE (REDESIGNED) ─────────────────────────────────────────────
+  if (mode === "hero") {
+    return (
+      <section
+        ref={sectionRef}
+        className="relative flex min-h-[100dvh] w-full overflow-hidden bg-[#050505]"
+      >
+        {/* Full-bleed background image with subtle zoom on load */}
+        <div className="absolute inset-0 z-0">
           <img
-            key={index}
-            src={img}
+            src={image}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-900 ease-in-out"
+            className={`h-full w-full object-cover transition-all duration-[1.4s] ease-out ${
+              isLoaded ? "scale-100 opacity-100" : "scale-110 opacity-0"
+            }`}
             style={{
-              opacity: index === activeIndex ? 1 : 0,
+              transform: isLoaded
+                ? `translate(${mousePos.x * -0.5}px, ${mousePos.y * -0.5}px) scale(1)`
+                : "scale(1.1)",
+              transition: "transform 0.6s ease-out, opacity 1.4s ease-out",
             }}
+            onLoad={() => setIsLoaded(true)}
           />
-        ))}
-      </div>
-
-      {/* Overlays */}
-<div
-  className="absolute inset-0"
-  style={{
-    background:
-      "linear-gradient(110deg,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.08) 100%)",
-  }}
-/>
-<div
-  className="absolute inset-0"
-  style={{
-    background:
-      "linear-gradient(0deg,rgba(0,0,0,0.80) 0%,transparent 50%)",
-  }}
-/>
-
-{!isHero && (
-  <div
-    className="absolute bottom-0 left-0 right-0 z-10"
-    style={{
-      height: '120px',
-      background: "linear-gradient(to top, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.12) 40%, rgba(255,255,255,0) 100%)",
-      backdropFilter: "blur(12px)",
-      WebkitBackdropFilter: "blur(12px)",
-      maskImage: "linear-gradient(to top, black 0%, black 30%, transparent 100%)",
-      WebkitMaskImage: "linear-gradient(to top, black 0%, black 30%, transparent 100%)",
-    }}
-  />
-)}
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center px-6 text-center mt-24">
-        {badge && (
-          <div
-            className="inline-flex items-center gap-2 rounded-full backdrop-blur-sm"
-            style={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
-          >
-            <div className="rounded-full bg-white px-3 py-1">
-              <span className="text-xs font-medium text-black">
-                {badge.label}
-              </span>
-            </div>
-            <span className="text-xs font-medium text-white/90 pr-3 py-1">
-              {badge.text}
-            </span>
-          </div>
-        )}
-
-        <h1 className="font-display tabular-nums mt-6 text-5xl font-semibold leading-[1.1] text-white sm:text-6xl">
-          {heading}
-        </h1>
-
-        {subtext && (
-          <p className="font-sans mt-4 max-w-md text-sm text-white/70 leading-relaxed">
-            {subtext}
-          </p>
-        )}
-
-        <div className="mt-8 flex items-center gap-3">
-          <Link
-            to={primaryLink}
-            className="rounded-full bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
-          >
-            {primaryLabel}
-          </Link>
-          <Link
-            to={secondaryLink}
-            className="rounded-full px-6 py-2.5 text-sm font-medium text-white border border-white/30 backdrop-blur-sm transition hover:bg-white/10"
-          >
-            {secondaryLabel}
-          </Link>
         </div>
-      </div>
 
-      {/* Slider controls — only when multiple images */}
-      {isSlider && (
+        {/* Gradient overlays for text readability */}
         <div
-          className="absolute right-6 top-1/2 z-10 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-10"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {images.map((img, index) => {
-            const isActive = index === activeIndex;
-            return (
-              <button
-                key={index}
-                onClick={() => setActiveIndex(index)}
-                aria-label={`View look ${index + 1}`}
-                className="group flex items-center gap-3"
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(5,5,5,0.85) 0%, rgba(5,5,5,0.5) 45%, rgba(5,5,5,0.2) 70%, transparent 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(5,5,5,0.7) 0%, transparent 40%)",
+          }}
+        />
+        {/* Bottom fade for scroll transition */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-[1] h-32"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(5,5,5,0.8) 0%, transparent 100%)",
+          }}
+        />
+
+        {/* Content container - left aligned, vertically centered */}
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col justify-center px-6 pt-20 sm:px-10 lg:px-16 xl:px-20">
+          <div className="max-w-xl lg:max-w-2xl">
+            {/* Badge */}
+            {badge && (
+              <div
+                className={`mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/10 px-1.5 py-1.5 backdrop-blur-md transition-all duration-700 ${
+                  isLoaded
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.06)",
+                  transitionDelay: "150ms",
+                }}
               >
-                <span
-                  className={`overflow-hidden rounded-md transition-all duration-300 ${
-                    isActive ? "h-14 w-10 opacity-100" : "h-0 w-0 opacity-0"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
+                <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-neutral-900">
+                  {badge.label}
                 </span>
-                <span
-                  className={`font-serif tabular-nums transition-all duration-300 ${
-                    isActive
-                      ? "text-3xl text-white"
-                      : "text-base text-white/40 group-hover:text-white/70"
-                  }`}
-                >
-                  {String(index + 1).padStart(2, "0")}
+                <span className="pr-3 text-[11px] font-medium text-white/70">
+                  {badge.text}
                 </span>
-              </button>
-            );
-          })}
-          <div className="mt-1 h-16 w-px bg-white/20">
+              </div>
+            )}
+
+            {/* Heading - massive, tight leading */}
+            <h1
+              className={`font-display text-balance text-[clamp(2.8rem,7vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-white transition-all duration-1000 ${
+                isLoaded
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-8 opacity-0"
+              }`}
+              style={{ transitionDelay: "300ms" }}
+            >
+              {heading}
+            </h1>
+
+            {/* Accent line */}
             <div
-              className="w-px bg-white transition-all duration-500"
+              className={`my-8 h-[2px] w-20 rounded-full bg-white/20 transition-all duration-700 ${
+                isLoaded ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+              }`}
               style={{
-                height: `${((activeIndex + 1) / images.length) * 100}%`,
+                transitionDelay: "500ms",
+                transformOrigin: "left",
               }}
             />
+
+            {/* Subtext */}
+            {subtext && (
+              <p
+                className={`max-w-md text-[15px] leading-[1.7] text-white/50 transition-all duration-700 ${
+                  isLoaded
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+                style={{ transitionDelay: "550ms" }}
+              >
+                {subtext}
+              </p>
+            )}
+
+            {/* CTA Buttons */}
+            <div
+              className={`mt-10 flex flex-col gap-3 sm:flex-row sm:items-center ${
+                isLoaded
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+              style={{ transitionDelay: "700ms" }}
+            >
+              <Link
+                to={primaryLink}
+                className="group inline-flex items-center gap-2.5 rounded-full bg-white px-8 py-3.5 text-[13px] font-semibold text-neutral-900 transition-all duration-300 hover:bg-neutral-100 hover:shadow-[0_0_40px_rgba(255,255,255,0.12)] active:scale-[0.97]"
+              >
+                {primaryLabel}
+                <svg
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </Link>
+              <Link
+                to={secondaryLink}
+                className="inline-flex items-center justify-center rounded-full border border-white/15 px-8 py-3.5 text-[13px] font-medium text-white/60 backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/5 hover:text-white/90 active:scale-[0.97]"
+              >
+                {secondaryLabel}
+              </Link>
+            </div>
+
+            {/* Scroll cue */}
+            {showScrollCue && (
+              <div
+                className={`mt-16 hidden items-center gap-3 lg:flex transition-all duration-700 ${
+                  isLoaded ? "opacity-100" : "opacity-0"
+                }`}
+                style={{ transitionDelay: "900ms" }}
+              >
+                <div className="h-10 w-px overflow-hidden bg-white/15">
+                  <div
+                    className="h-full w-full bg-white/50"
+                    style={{
+                      animation: "scrollDown 2.2s ease-in-out infinite",
+                    }}
+                  />
+                </div>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-white/25">
+                  Scroll
+                </span>
+              </div>
+            )}
           </div>
         </div>
-      )}
-    </section>
-  );
+
+        {/* Decorative floating glass element (desktop only) */}
+        <div
+          className={`pointer-events-none absolute right-[10%] top-1/4 z-[2] hidden h-56 w-56 rounded-full lg:block ${
+            isLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            background:
+              "radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)",
+            backdropFilter: "blur(60px)",
+            transform: `translate(${mousePos.x * -2}px, ${
+              mousePos.y * -2
+            }px)`,
+            transition: "transform 0.5s ease-out, opacity 1s ease-out",
+            transitionDelay: "opacity 200ms",
+          }}
+        />
+
+        <style>{`
+          @keyframes scrollDown {
+            0% { transform: translateY(-100%); }
+            50% { transform: translateY(0%); }
+            100% { transform: translateY(100%); }
+          }
+        `}</style>
+      </section>
+    );
+  }
+
+  // ─── BLOG MODE ────────────────────────────────────────────────────────────
+  if (mode === "blog") {
+    return (
+      <section className="relative flex min-h-[55dvh] w-full items-end overflow-hidden bg-[#080808] sm:min-h-[60dvh]">
+        <div className="absolute inset-0 z-0">
+          <img src={image} alt="" className={`h-full w-full object-cover object-top transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`} onLoad={() => setIsLoaded(true)} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(8,8,8,0.4) 0%, rgba(8,8,8,0.55) 50%, rgba(8,8,8,0.85) 100%)" }} />
+        </div>
+        <div className="relative z-10 w-full px-6 pb-14 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-7xl text-center">
+            {badge && (
+              <p className={`mb-4 text-[11px] font-medium uppercase tracking-[0.22em] text-white/35 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "100ms" }}>Blog</p>
+            )}
+            <h1 className={`font-display text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-white transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ transitionDelay: "200ms" }}>{heading}</h1>
+            {subtext && <p className={`mx-auto mt-4 max-w-sm text-[14px] text-white/40 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "400ms" }}>{subtext}</p>}
+            {children && (
+              <div className={`mt-8 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: "550ms" }}>{children}</div>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ─── CONTACT MODE ─────────────────────────────────────────────────────────
+  if (mode === "contact") {
+    return (
+      <section className="relative flex min-h-[55dvh] w-full items-end overflow-hidden bg-[#080808] sm:min-h-[60dvh]">
+        <div className="absolute inset-0 z-0">
+          <img src={image} alt="" className={`h-full w-full object-cover transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`} onLoad={() => setIsLoaded(true)} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(8,8,8,0.4) 0%, rgba(8,8,8,0.55) 50%, rgba(8,8,8,0.85) 100%)" }} />
+        </div>
+        <div className="relative z-10 w-full px-6 pb-14 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-7xl text-center">
+            {badge && (
+              <p className={`mb-4 text-[11px] font-medium uppercase tracking-[0.22em] text-white/35 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "100ms" }}>Contact</p>
+            )}
+            <h1 className={`font-display text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-white transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ transitionDelay: "200ms" }}>{heading}</h1>
+            {subtext && <p className={`mx-auto mt-4 max-w-sm text-[14px] text-white/40 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "400ms" }}>{subtext}</p>}
+            {children && (
+              <div className={`mt-8 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: "550ms" }}>{children}</div>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ─── ABOUT MODE ───────────────────────────────────────────────────────────
+  if (mode === "about") {
+    return (
+      <section className="relative flex min-h-[55dvh] w-full items-end overflow-hidden bg-[#080808] sm:min-h-[60dvh]">
+        <div className="absolute inset-0 z-0">
+          <img src={image} alt="" className={`h-full w-full object-cover transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`} onLoad={() => setIsLoaded(true)} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(8,8,8,0.4) 0%, rgba(8,8,8,0.55) 50%, rgba(8,8,8,0.85) 100%)" }} />
+        </div>
+        <div className="relative z-10 w-full px-6 pb-14 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-7xl text-center">
+            {badge && (
+              <p className={`mb-4 text-[11px] font-medium uppercase tracking-[0.22em] text-white/35 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "100ms" }}>ABOUT</p>
+            )}
+            <h1 className={`font-display text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-white transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ transitionDelay: "200ms" }}>{heading}</h1>
+            {subtext && <p className={`mx-auto mt-4 max-w-sm text-[14px] text-white/40 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "400ms" }}>{subtext}</p>}
+            {children && (
+              <div className={`mt-8 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: "550ms" }}>{children}</div>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ─── SHOP MODE ────────────────────────────────────────────────────────────
+  if (mode === "shop") {
+    return (
+      <section className="relative flex min-h-[55dvh] w-full items-end overflow-hidden bg-[#080808] sm:min-h-[60dvh]">
+        <div className="absolute inset-0 z-0">
+          <img src={image} alt="" className={`h-full w-full object-cover transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`} onLoad={() => setIsLoaded(true)} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(8,8,8,0.4) 0%, rgba(8,8,8,0.55) 50%, rgba(8,8,8,0.85) 100%)" }} />
+        </div>
+        <div className="relative z-10 w-full px-6 pb-14 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-7xl text-center">
+            {badge && (
+              <p className={`mb-4 text-[11px] font-medium uppercase tracking-[0.22em] text-white/35 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "100ms" }}>{badge.label}</p>
+            )}
+            <h1 className={`font-display text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-white transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ transitionDelay: "200ms" }}>{heading}</h1>
+            {subtext && <p className={`mx-auto mt-4 max-w-sm text-[14px] text-white/40 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "400ms" }}>{subtext}</p>}
+            {children && (
+              <div className={`mt-8 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: "550ms" }}>{children}</div>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ─── COLLECTION MODE ──────────────────────────────────────────────────────
+  if (mode === "collection") {
+    return (
+      <section className="relative flex min-h-[50dvh] w-full items-center overflow-hidden bg-[#080808] sm:min-h-[55dvh]">
+        <div className="absolute inset-0 z-0">
+          <img src={image} alt="" className={`h-full w-full object-cover transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`} onLoad={() => setIsLoaded(true)} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(8,8,8,0.25) 0%, rgba(8,8,8,0.6) 100%)" }} />
+        </div>
+        <div className="relative z-10 w-full px-6 text-center sm:px-10 lg:px-16">
+          {badge && (
+            <p className={`mb-5 text-[10px] font-medium uppercase tracking-[0.3em] text-white/40 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "150ms" }}>{badge.label}</p>
+          )}
+          <h1 className={`font-display text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[0.05em] text-white transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ transitionDelay: "250ms" }}>{heading}</h1>
+          {subtext && <p className={`mx-auto mt-4 max-w-sm text-[12px] uppercase tracking-[0.15em] text-white/70 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`} style={{ transitionDelay: "450ms" }}>{subtext}</p>}
+          <div className={`mt-8 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: "600ms" }}>
+            <Link to={primaryLink} className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/8 px-7 py-3 text-[13px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/15 active:scale-[0.97]">
+              {primaryLabel}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return null;
 };
 
 export default HeroSection;

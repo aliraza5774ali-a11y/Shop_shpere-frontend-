@@ -8,27 +8,23 @@ import StyleWearSection from "../components/sections/StyleWearSection";
 import VideoSection from "../components/sections/VideoSection";
 
 import img1 from "../assets/hero_01.avif";
-import img2 from "../assets/hero_02.avif";
-import img3 from "../assets/hero_03.avif";
-import img4 from "../assets/hero_04.avif";
-import img5 from "../assets/hero_05.avif";
+// import img2 from "../assets/hero_02.avif";
+// import img3 from "../assets/hero_03.avif";
+// import img4 from "../assets/hero_04.avif";
+// import img5 from "../assets/hero_05.avif";
 
 const Home = () => {
   return (
     <>
-      <HeroSection
-        images={[img1, img2, img3, img4, img5]}
-        badge={{ label: "Soft", text: "Warm Winter Layers" }}
-        heading={
-          <>
-            Premium wear
-            <br />
-            for modern living
-          </>
-        }
-        subtext="Discover our new range of soft clothes made for your daily look."
-        primaryLabel="See Collection"
-      />
+  <HeroSection
+  mode="hero"
+  image={img1}
+  badge={{ label: "New", text: "Summer Collection 2026" }}
+  heading="Crafted for those who refuse ordinary"
+  subtext="Discover pieces designed with intention, built to last, and made for the moments that matter most."
+  primaryLabel="Explore Collection"
+  secondaryLabel="Our Story"
+/>
       <ProductSection />
       <VideoSection />
       <BestSeller />

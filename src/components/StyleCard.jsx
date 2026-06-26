@@ -4,21 +4,21 @@ import { motion } from "framer-motion";
 const StyleCard = ({ card }) => {
   const { style01, style02, title, description, features } = card;
   const [hovered, setHovered] = useState(false);
+
   return (
     <div
-      className="bg-white flex-1 rounded-xl overflow-hidden flex flex-col"
+      className="bg-white flex-1 rounded-xl overflow-hidden flex flex-col min-w-0"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Image area */}
-      <div className="relative h-[260px]  flex items-center justify-center overflow-hidden">
+      <div className="relative h-[220px] sm:h-[240px] md:h-[260px] flex items-center justify-center overflow-hidden">
         <motion.div
-          className="absolute w-[130px] h-[170px] rounded-2xl overflow-hidden border-2 border-white"
+          className="absolute w-[100px] h-[140px] sm:w-[115px] sm:h-[155px] md:w-[130px] md:h-[170px] rounded-2xl overflow-hidden border-2 border-white"
           animate={{
             rotate: hovered ? -14 : -10,
             scale: hovered ? 1.05 : 1,
             y: hovered ? -6 : 0,
-            x: -50,
+            x: -32,
           }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.13)", zIndex: 2 }}
@@ -27,12 +27,12 @@ const StyleCard = ({ card }) => {
         </motion.div>
 
         <motion.div
-          className="absolute w-[130px] h-[170px] rounded-2xl overflow-hidden border-2 border-white"
+          className="absolute w-[100px] h-[140px] sm:w-[115px] sm:h-[155px] md:w-[130px] md:h-[170px] rounded-2xl overflow-hidden border-2 border-white"
           animate={{
             rotate: hovered ? 14 : 10,
             scale: hovered ? 1.05 : 1,
             y: hovered ? -6 : 0,
-            x: 50,
+            x: 32,
           }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.13)", zIndex: 1 }}
@@ -41,25 +41,26 @@ const StyleCard = ({ card }) => {
         </motion.div>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col gap-4 p-6">
-        <h3 className="text-base text-[24px] border-b border-black/10 font-semibold text-black">
+      <div className="flex flex-col gap-3 sm:gap-4 p-4 sm:p-5 md:p-2">
+        <h3 className="border-b border-black/10 font-semibold text-black text-lg sm:text-xl md:text-[24px] pb-2">
           {title}
         </h3>
-        <p className="text-[16px] max-w-[380px] text-black/70  leading-relaxed">
+
+        <p className="text-sm sm:text-base md:text-[16px] max-w-full md:max-w-[380px] text-black/70 leading-relaxed">
           {description}
         </p>
-        <div className="flex items-center flex-wrap gap-2">
-          {features.map(({ icon: Icon, content }, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center gap-0.5  bg-[#f0f0f0] font-semibold text-black/90 text-[13px] font-medium px-2 py-1 rounded-full"
-            >
-              <Icon size={12} />
-              {content}
-            </span>
-          ))}
-        </div>
+
+       <div className="inline-flex  items-center gap-2">
+  {features.map(({ icon: Icon, content }, index) => (
+    <span
+      key={index}
+      className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-[#f0f0f0] px-2.5 py-1 text-[12px] font-semibold text-black/90 sm:text-[13px]"
+    >
+      <Icon size={12} />
+      {content}
+    </span>
+  ))}
+</div>
       </div>
     </div>
   );

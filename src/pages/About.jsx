@@ -6,21 +6,13 @@ import PartnersSection from "../components/sections/PartnerSection";
 const About = () => {
   return (
     <div>
-      <HeroSection
-        images={[hero1]}
-        badge={{ label: "About", text: "Know about Wearix" }}
-        heading={
-          <>
-            Timeless design,
-            <br />
-            modern wearability
-          </>
-        }
-        subtext="We focus on creating essential garments that remain relevant, functional, and refined across seasons."
-        primaryLabel="Browse Collection"
-        secondaryLabel="Contact us"
-        isHero={false}
-      />
+  <HeroSection
+  mode="about"
+  image={hero1}
+  badge={{ label: "About Us", text: "Crafting Experiences" }}
+  heading="Designing Products"
+  subtext="We believe great products are built through thoughtful design, quality craftsmanship, and attention to every detail."
+/>
       <PartnersSection/>
       <AboutSection/>
     </div>

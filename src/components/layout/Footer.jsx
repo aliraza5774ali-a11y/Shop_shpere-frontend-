@@ -1,139 +1,140 @@
-import { BsFacebook, BsInstagram, BsTwitter, BsYoutube } from "react-icons/bs";
+import {
+  BsFacebook,
+  BsInstagram,
+  BsTwitter,
+  BsYoutube,
+} from "react-icons/bs";
+import { Link } from "react-router-dom";
+
+const shopLinks = [
+  { name: "New Arrivals", path: "/new-arrivals" },
+  { name: "Collections", path: "/collections" },
+  { name: "Bestsellers", path: "/bestsellers" },
+  { name: "Sale", path: "/sale" },
+];
+
+const companyLinks = [
+  { name: "About Us", path: "/about" },
+  { name: "Careers", path: "/careers" },
+  { name: "Press", path: "/press" },
+  { name: "Blog", path: "/blog" },
+];
+
+const supportLinks = [
+  { name: "FAQ", path: "/faq" },
+  { name: "Shipping & Returns", path: "/shipping-returns" },
+  { name: "Size Guide", path: "/size-guide" },
+  { name: "Contact", path: "/contact" },
+];
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white px-28 pt-16 pb-8 flex flex-col gap-16">
-      {/* Top — Newsletter + Nav */}
-      <div className="flex items-start justify-between gap-16">
-        {/* Brand + Newsletter */}
-        <div className="flex flex-col gap-6 max-w-sm">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-3xl font-semibold tracking-wide">VELOUR</h2>
-            <p className="text-sm text-white/50 leading-relaxed">
-              Minimal luxury for those who dress with intention. Curated drops,
-              timeless pieces.
-            </p>
+    <footer className="bg-black text-white px-5 py-12 sm:px-8 md:px-12 lg:px-20 xl:px-28 sm:pt-14 sm:pb-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-12 sm:gap-16">
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
+          <div className="lg:col-span-4 flex flex-col gap-6 max-w-md">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-3xl font-semibold tracking-wide">VELOUR</h2>
+              <p className="text-sm leading-relaxed text-white/55">
+                Minimal luxury for those who dress with intention. Curated drops,
+                timeless pieces.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-xs uppercase tracking-[0.25em] text-white/40">
+                Stay in the loop
+              </p>
+
+              <form className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white/30"
+                />
+                <button
+                  type="submit"
+                  className="rounded-xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <p className="text-xs text-white/40 uppercase tracking-widest">
-              Stay in the loop
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 outline-none focus:border-white/30 transition"
-              />
-              <button className="bg-white text-black text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-white/90 transition">
-                Subscribe
-              </button>
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-8">
+            <div className="flex flex-col gap-4">
+              <p className="text-xs uppercase tracking-[0.25em] text-white/40">
+                Shop
+              </p>
+              <ul className="flex flex-col gap-3 text-sm text-white/70">
+  {shopLinks.map((link) => (
+    <li key={link.path}>
+      <Link to={link.path} className="transition hover:text-white">
+        {link.name}
+      </Link>
+    </li>
+  ))}
+</ul>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <p className="text-xs uppercase tracking-[0.25em] text-white/40">
+                Company
+              </p>
+              <ul className="flex flex-col gap-3 text-sm text-white/70">
+  {companyLinks.map((link) => (
+    <li key={link.path}>
+      <Link to={link.path} className="transition hover:text-white">
+        {link.name}
+      </Link>
+    </li>
+  ))}
+</ul>
+            </div>
+
+            <div className="col-span-2 flex flex-col gap-4 sm:col-span-1">
+              <p className="text-xs uppercase tracking-[0.25em] text-white/40">
+                Support
+              </p>
+              <ul className="flex flex-col gap-3 text-sm text-white/70">
+  {supportLinks.map((link) => (
+    <li key={link.path}>
+      <Link to={link.path} className="transition hover:text-white">
+        {link.name}
+      </Link>
+    </li>
+  ))}
+</ul>
             </div>
           </div>
         </div>
 
-        {/* Nav Columns */}
-        <div className="flex gap-20">
-          <div className="flex flex-col gap-4">
-            <p className="text-xs uppercase tracking-widest text-white/40">
-              Shop
-            </p>
-            <ul className="flex flex-col gap-3 text-sm text-white/70">
-              <li className="hover:text-white transition cursor-pointer">
-                New Arrivals
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Collections
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Bestsellers
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Sale
-              </li>
-            </ul>
+        <div className="border-t border-white/10" />
+
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <p className="text-xs text-white/30">
+            © 2026 VELOUR. All rights reserved.
+          </p>
+
+          <div className="flex items-center gap-4">
+            <BsInstagram className="cursor-pointer text-white/40 transition hover:text-white" size={16} />
+            <BsTwitter className="cursor-pointer text-white/40 transition hover:text-white" size={16} />
+            <BsFacebook className="cursor-pointer text-white/40 transition hover:text-white" size={16} />
+            <BsYoutube className="cursor-pointer text-white/40 transition hover:text-white" size={16} />
           </div>
 
-          <div className="flex flex-col gap-4">
-            <p className="text-xs uppercase tracking-widest text-white/40">
-              Company
-            </p>
-            <ul className="flex flex-col gap-3 text-sm text-white/70">
-              <li className="hover:text-white transition cursor-pointer">
-                About Us
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Careers
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Press
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Blog
-              </li>
-            </ul>
+          <div className="flex flex-wrap items-center gap-4 text-xs text-white/30 sm:gap-6 md:justify-end">
+            <span className="cursor-pointer transition hover:text-white/60">
+              Privacy Policy
+            </span>
+            <span className="cursor-pointer transition hover:text-white/60">
+              Terms of Use
+            </span>
+            <span className="cursor-pointer transition hover:text-white/60">
+              Cookie Settings
+            </span>
           </div>
-
-          <div className="flex flex-col gap-4">
-            <p className="text-xs uppercase tracking-widest text-white/40">
-              Support
-            </p>
-            <ul className="flex flex-col gap-3 text-sm text-white/70">
-              <li className="hover:text-white transition cursor-pointer">
-                FAQ
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Shipping & Returns
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Size Guide
-              </li>
-              <li className="hover:text-white transition cursor-pointer">
-                Contact
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-white/10" />
-
-      {/* Bottom — Legal + Socials */}
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-white/30">
-          © 2026 VELOUR. All rights reserved.
-        </p>
-
-        <div className="flex items-center gap-5">
-          <BsInstagram
-            size={16}
-            className="text-white/40 hover:text-white transition cursor-pointer"
-          />
-          <BsTwitter
-            size={16}
-            className="text-white/40 hover:text-white transition cursor-pointer"
-          />
-          <BsFacebook
-            size={16}
-            className="text-white/40 hover:text-white transition cursor-pointer"
-          />
-          <BsYoutube
-            size={16}
-            className="text-white/40 hover:text-white transition cursor-pointer"
-          />
-        </div>
-
-        <div className="flex items-center gap-6 text-xs text-white/30">
-          <span className="hover:text-white/60 transition cursor-pointer">
-            Privacy Policy
-          </span>
-          <span className="hover:text-white/60 transition cursor-pointer">
-            Terms of Use
-          </span>
-          <span className="hover:text-white/60 transition cursor-pointer">
-            Cookie Settings
-          </span>
         </div>
       </div>
     </footer>
