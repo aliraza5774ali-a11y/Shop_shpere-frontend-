@@ -19,7 +19,8 @@ import OrderSummary from "../components/OrderSummary";
 
 const STEPS = ["Shipping", "Payment", "Review"];
 
-
+const parsePrice = (price) =>
+  Number(String(price).replace(/[^\d.-]/g, "")) || 0;
 
 const detectCardBrand = (digits) => {
   if (/^4/.test(digits)) return "visa";
