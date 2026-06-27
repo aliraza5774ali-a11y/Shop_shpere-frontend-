@@ -44,6 +44,22 @@ export const WISHLIST = [
   { id: "PRD-004", name: "Jordan 4 Military Black",     price: 210, stock: "Out of Stock", img: "" },
 ];
 
+// ─── Promotions ───────────────────────────────────────────────────────────────
+export const PROMOTIONS = [
+  { id: "PRM-001", name: "Summer Sneaker Sale",   code: "SUMMER25",  type: "Percentage", value: 25, used: 184, limit: 500,  starts: "2025-06-01", ends: "2025-07-15", status: "Active"   },
+  { id: "PRM-002", name: "New Customer Discount", code: "WELCOME10", type: "Percentage", value: 10, used: 412, limit: 1000, starts: "2025-01-01", ends: "2025-12-31", status: "Active"   },
+  { id: "PRM-003", name: "Free Shipping Weekend", code: "FREESHIP",  type: "Shipping",   value: 0,  used: 96,  limit: 200,  starts: "2025-06-20", ends: "2025-06-29", status: "Active"   },
+  { id: "PRM-004", name: "Flash Friday",          code: "FLASH50",   type: "Fixed",      value: 50, used: 200, limit: 200,  starts: "2025-05-30", ends: "2025-05-31", status: "Ended"    },
+  { id: "PRM-005", name: "Holiday Preview",       code: "HOLIDAY15", type: "Percentage", value: 15, used: 0,   limit: 750,  starts: "2025-11-01", ends: "2025-11-30", status: "Scheduled"},
+];
+
 // ─── Analytics sparkline data ─────────────────────────────────────────────────
 export const WEEKLY_REVENUE = [1200, 1850, 1400, 2200, 1900, 2600, 3100];
 export const MONTHLY_ORDERS = [22, 35, 28, 41, 38, 52, 47, 60, 55, 70, 64, 82];
+
+// ─── Earning sparkline data ────────────────────────────────────────────────────
+export const EARNING_TREND = {
+  allTime:   [3200, 3650, 3400, 3900, 4100, 4400, 4823],
+  available: [1800, 2100, 1950, 2300, 2250, 2480, 2615],
+  clearing:  [180, 240, 310, 280, 360, 410, 489],
+};

@@ -12,8 +12,13 @@ const Icon = ({ d, size = 18 }) => (
 
 const ICONS = {
   dashboard:  "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
+  ecommerce:  "M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0",
   orders:     "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2 M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2 M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2",
   products:   "M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16",
+  categories: "M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z",
+  earning:    "M12 1v22 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+  promotion:  "M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7h.01",
+  customer:   "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
   users:      "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
   analytics:  "M18 20V10 M12 20V4 M6 20v-6",
   inventory:  "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
@@ -28,11 +33,15 @@ const ICONS = {
 
 // ─── Nav config ──────────────────────────────────────────────────────────────
 const ADMIN_NAV = [
-  { id: "overview",   label: "Overview",          icon: "dashboard"  },
-  { id: "orders",     label: "Orders & Invoices",  icon: "orders"     },
-  { id: "products",   label: "Products",           icon: "products"   },
+  { id: "overview",   label: "Dashboard",          icon: "dashboard"  },
+  { id: "ecommerce",  label: "Ecommerce",          icon: "ecommerce"  },
+  { id: "orders",     label: "All Order",          icon: "orders"     },
+  { id: "products",   label: "All Product",        icon: "products"   },
+  { id: "categories", label: "Categories",         icon: "categories" },
+  { id: "earning",    label: "Earning",            icon: "earning"    },
+  { id: "promotion",  label: "Promotion",          icon: "promotion"  },
+  { id: "customer",   label: "Customer",           icon: "customer"   },
   { id: "inventory",  label: "Inventory",          icon: "inventory"  },
-  { id: "users",      label: "Users",              icon: "users"      },
   { id: "analytics",  label: "Analytics",          icon: "analytics"  },
 ];
 

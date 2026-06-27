@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import {
   ORDERS, PRODUCTS, USERS, WEEKLY_REVENUE, MONTHLY_ORDERS,
+  PROMOTIONS, EARNING_TREND,
 } from "../data/mockData.js";
 
 // ─── Tiny helpers ─────────────────────────────────────────────────────────────
@@ -19,6 +20,8 @@ const Badge = ({ status }) => {
     Out:        "bg-[#fef2f2] text-[#991b1b]",
     Paid:       "bg-[#f0faf4] text-[#1a7a44]",
     Refunded:   "bg-[#fef2f2] text-[#991b1b]",
+    Ended:      "bg-[#eeeeee] text-gray-500",
+    Scheduled:  "bg-[#eff6ff] text-[#1d4ed8]",
   };
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${map[status] ?? "bg-[#eeeeee] text-gray-600"}`}>
@@ -111,6 +114,69 @@ const AdminOverview = () => {
                   <p className="text-xs font-semibold text-gray-900">${o.total}</p>
                   <Badge status={o.status} />
                 </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+// ─── Ecommerce (store-wide summary) ───────────────────────────────────────────
+const AdminEcommerce = () => {
+  const totalRevenue  = ORDERS.filter(o => o.payment === "Paid").reduce((s, o) => s + o.total, 0);
+  const totalProducts = PRODUCTS.length;
+  const totalStock    = PRODUCTS.reduce((s, p) => s + p.stock, 0);
+  const lowStock      = PRODUCTS.filter(p => p.stock > 0 && p.stock < 10).length;
+  const outOfStock    = PRODUCTS.filter(p => p.stock === 0).length;
+  const byCategory    = Object.entries(
+    PRODUCTS.reduce((acc, p) => {
+      acc[p.category] = (acc[p.category] || 0) + 1;
+      return acc;
+    }, {})
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard label="Store Revenue"  value={`$${totalRevenue.toLocaleString("en", { minimumFractionDigits: 2 })}`} sub="This period" />
+        <StatCard label="Total Products" value={totalProducts} sub={`${byCategory.length} categories`} />
+        <StatCard label="Units in Stock" value={totalStock}    sub={`${lowStock} running low`} accent={lowStock ? "text-amber-600" : undefined} />
+        <StatCard label="Out of Stock"   value={outOfStock}    accent={outOfStock ? "text-red-500" : undefined} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <p className="mb-4 text-xs font-semibold text-gray-900">Products by Category</p>
+          <div className="space-y-3">
+            {byCategory.map(([cat, count]) => {
+              const pct = Math.round((count / totalProducts) * 100);
+              return (
+                <div key={cat}>
+                  <div className="mb-1 flex justify-between text-[10px]">
+                    <span className="text-gray-600">{cat}</span>
+                    <span className="font-medium text-gray-900">{count} ({pct}%)</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-[#eeeeee]">
+                    <div className="h-full rounded-full bg-gray-900" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card>
+          <p className="mb-4 text-xs font-semibold text-gray-900">Best Sellers</p>
+          <div className="space-y-3">
+            {[...PRODUCTS].sort((a, b) => b.price - a.price).slice(0, 5).map((p) => (
+              <div key={p.id} className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-gray-900">{p.name}</p>
+                  <p className="text-[10px] text-gray-400">{p.sku} · {p.category}</p>
+                </div>
+                <p className="text-xs font-semibold text-gray-900">${p.price}</p>
               </div>
             ))}
           </div>
@@ -323,6 +389,345 @@ const AdminProducts = () => {
   );
 };
 
+// ─── Categories ───────────────────────────────────────────────────────────────
+const AdminCategories = () => {
+  const categories = Object.entries(
+    PRODUCTS.reduce((acc, p) => {
+      if (!acc[p.category]) acc[p.category] = [];
+      acc[p.category].push(p);
+      return acc;
+    }, {})
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-gray-400">{categories.length} categories · {PRODUCTS.length} products total</p>
+        <button className="rounded-xl bg-gray-900 px-4 py-2 text-xs font-medium text-white hover:bg-gray-800 transition">
+          + Add Category
+        </button>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {categories.map(([name, items]) => {
+          const totalStock = items.reduce((s, p) => s + p.stock, 0);
+          const avgPrice = (items.reduce((s, p) => s + p.price, 0) / items.length).toFixed(0);
+          return (
+            <Card key={name}>
+              <div className="mb-3 flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{name}</p>
+                  <p className="text-[10px] text-gray-400">{items.length} products</p>
+                </div>
+                <button className="rounded-lg border border-[#eeeeee] px-2.5 py-1 text-[10px] text-gray-600 hover:border-gray-900 hover:text-gray-900 transition">
+                  Edit
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <p className="text-[10px] text-gray-400">Units in stock</p>
+                  <p className="font-semibold text-gray-900">{totalStock}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400">Avg price</p>
+                  <p className="font-semibold text-gray-900">${avgPrice}</p>
+                </div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// ─── Earning ──────────────────────────────────────────────────────────────────
+const EarningStatCard = ({ icon, label, value, sub, subAccent, spark, sparkColor, trendUp }) => (
+  <Card className="flex flex-col">
+    <div className="flex items-start justify-between">
+      <div className="flex items-start gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f8f8f8] text-sm font-semibold text-gray-700">
+          {icon}
+        </div>
+        <div>
+          <p className="text-xs text-gray-400">{label}</p>
+          <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
+        </div>
+      </div>
+      <Spark data={spark} color={sparkColor} />
+    </div>
+    {sub && (
+      <p className="mt-3 text-xs text-gray-400">
+        {sub} <span className={`font-medium ${subAccent}`}>{trendUp ? "▲" : "▼"} 10%</span>
+      </p>
+    )}
+  </Card>
+);
+
+const AdminEarning = () => {
+  const [tab, setTab] = useState("history");
+  const [search, setSearch] = useState("");
+  const [checked, setChecked] = useState({});
+
+  const totalRevenue   = ORDERS.filter(o => o.payment === "Paid").reduce((s, o) => s + o.total, 0);
+  const availableFunds = totalRevenue * 0.55;
+  const clearingFunds  = totalRevenue * 0.1;
+
+  const earningRows = PRODUCTS.map((p) => ({
+    sku: p.sku,
+    updated: "26 Jun, 2025",
+    name: p.name,
+    category: p.category,
+    variation: "1 Style",
+    unitPrice: p.price,
+    totalSales: p.stock + 40,
+    totalEarning: Math.round(p.price * (p.stock + 40) * 0.15),
+    status: p.stock === 0 ? "Out of Stock" : p.stock < 10 ? "Low Stock" : "In Stock",
+  }));
+
+  const filtered = earningRows.filter(
+    (r) =>
+      r.name.toLowerCase().includes(search.toLowerCase()) ||
+      r.sku.includes(search) ||
+      r.status.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const toggle = (i) => setChecked((c) => ({ ...c, [i]: !c[i] }));
+
+  const stockBadge = {
+    "In Stock":    "bg-[#f0faf4] text-[#1a7a44]",
+    "Low Stock":   "bg-[#fefce8] text-[#854d0e]",
+    "Out of Stock":"bg-[#fef2f2] text-[#991b1b]",
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs text-gray-400">
+            Get an overview of your current earning. You can easily withdraw balance.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button className="flex items-center gap-1.5 rounded-xl border border-[#eeeeee] bg-white px-4 py-2 text-xs font-medium text-gray-700 hover:bg-[#f8f8f8] transition">
+            ↓ Export List
+          </button>
+          <button className="flex items-center gap-1.5 rounded-xl bg-gray-900 px-4 py-2 text-xs font-medium text-white hover:bg-gray-800 transition">
+            + Withdraw Balance
+          </button>
+        </div>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <EarningStatCard
+          icon="$"
+          label="All Time Earnings"
+          value={`$${totalRevenue.toLocaleString("en", { minimumFractionDigits: 2 })}`}
+          sub="This period"
+          subAccent="text-[#1a7a44]"
+          trendUp
+          spark={EARNING_TREND.allTime}
+          sparkColor="#111"
+        />
+        <EarningStatCard
+          icon="%"
+          label="Available for Withdrawal"
+          value={`$${availableFunds.toLocaleString("en", { minimumFractionDigits: 2 })}`}
+          sub="This period"
+          subAccent="text-amber-600"
+          trendUp
+          spark={EARNING_TREND.available}
+          sparkColor="#854d0e"
+        />
+        <EarningStatCard
+          icon="#"
+          label="Payment Clearing"
+          value={`$${clearingFunds.toLocaleString("en", { minimumFractionDigits: 2 })}`}
+          sub="This period"
+          subAccent="text-[#1a7a44]"
+          trendUp
+          spark={EARNING_TREND.clearing}
+          sparkColor="#1a7a44"
+        />
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-6 border-b border-[#eeeeee]">
+        {[
+          { id: "history", label: "Earning History" },
+          { id: "withdraw", label: "Withdraw History" },
+        ].map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`relative pb-3 text-xs font-medium transition ${
+              tab === t.id ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            {t.label}
+            {tab === t.id && (
+              <span className="absolute inset-x-0 -bottom-px h-[2px] rounded-full bg-gray-900" />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {tab === "history" ? (
+        <div className="space-y-4">
+          {/* Search + filter row */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by ID, name, status"
+              className="w-64 rounded-xl border border-[#eeeeee] bg-white px-3.5 py-2 text-xs text-gray-900 outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+            />
+            <div className="flex items-center gap-2">
+              <select className="rounded-xl border border-[#eeeeee] bg-white px-3 py-2 text-xs text-gray-700 outline-none focus:border-gray-900">
+                <option>Sort By: All History</option>
+                <option>Sort By: This Week</option>
+                <option>Sort By: This Month</option>
+              </select>
+              <button className="flex items-center gap-1.5 rounded-xl border border-[#eeeeee] bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#f8f8f8] transition">
+                Filter ▾
+              </button>
+            </div>
+          </div>
+
+          {/* List */}
+          <Card className="p-0 overflow-hidden">
+            <div className="grid grid-cols-[24px_2fr_1fr_1fr_1fr_1fr_1fr] items-center gap-4 border-b border-[#eeeeee] bg-[#f8f8f8] px-5 py-3 text-[11px] font-medium text-gray-500">
+              <input type="checkbox" className="rounded border-gray-300" />
+              <span>Product</span>
+              <span>Variation</span>
+              <span>Unit Price</span>
+              <span>Total Sales</span>
+              <span>Total Earning</span>
+              <span>Status</span>
+            </div>
+
+            <div className="divide-y divide-[#eeeeee]">
+              {filtered.map((r, i) => (
+                <div key={i} className="grid grid-cols-[24px_2fr_1fr_1fr_1fr_1fr_1fr] items-center gap-4 px-5 py-4">
+                  <input
+                    type="checkbox"
+                    checked={!!checked[i]}
+                    onChange={() => toggle(i)}
+                    className="rounded border-gray-300"
+                  />
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#f8f8f8] text-[9px] font-semibold text-gray-400">
+                      {r.sku}
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-gray-400">
+                        SKU {r.sku} · Last Updated {r.updated}
+                      </p>
+                      <p className="mt-0.5 text-xs font-semibold text-gray-900">{r.name}</p>
+                      <p className="text-[10px] text-gray-400">Category: {r.category}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-700">{r.variation}</span>
+                  <span className="text-xs text-gray-700">${r.unitPrice.toFixed(2)}</span>
+                  <span className="text-xs text-gray-700">{r.totalSales}</span>
+                  <span className="text-xs font-semibold text-gray-900">${r.totalEarning.toLocaleString()}</span>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold w-fit ${stockBadge[r.status]}`}>
+                    {r.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {filtered.length === 0 && (
+              <p className="py-10 text-center text-xs text-gray-400">No earning records match your search.</p>
+            )}
+          </Card>
+        </div>
+      ) : (
+        <Card>
+          <p className="py-10 text-center text-xs text-gray-400">No withdrawal history yet.</p>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+// ─── Promotion ────────────────────────────────────────────────────────────────
+const AdminPromotion = () => {
+  const [search, setSearch] = useState("");
+  const filtered = PROMOTIONS.filter(
+    (p) => p.name.toLowerCase().includes(search.toLowerCase()) || p.code.toLowerCase().includes(search.toLowerCase())
+  );
+  const active = PROMOTIONS.filter((p) => p.status === "Active").length;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-4">
+        <StatCard label="Active Promotions" value={active} />
+        <StatCard label="Total Redemptions" value={PROMOTIONS.reduce((s, p) => s + p.used, 0)} />
+        <StatCard label="Total Promotions"  value={PROMOTIONS.length} />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search promotion or code…"
+          className="rounded-xl border border-[#eeeeee] bg-white px-3.5 py-2 text-xs text-gray-900 outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 w-52"
+        />
+        <button className="rounded-xl bg-gray-900 px-4 py-2 text-xs font-medium text-white hover:bg-gray-800 transition">
+          + New Promotion
+        </button>
+      </div>
+
+      <Card className="p-0 overflow-hidden">
+        <table className="w-full text-xs">
+          <thead className="bg-[#f8f8f8] border-b border-[#eeeeee]">
+            <tr>
+              {["Promotion","Code","Type","Value","Usage","Window","Status",""].map(h => (
+                <th key={h} className="px-4 py-3 text-left font-medium text-gray-500">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#eeeeee]">
+            {filtered.map((p) => {
+              const pct = Math.round((p.used / p.limit) * 100);
+              return (
+                <tr key={p.id} className="hover:bg-[#f8f8f8] transition">
+                  <td className="px-4 py-3 font-medium text-gray-900">{p.name}</td>
+                  <td className="px-4 py-3 font-mono text-gray-500">{p.code}</td>
+                  <td className="px-4 py-3 text-gray-500">{p.type}</td>
+                  <td className="px-4 py-3 font-semibold text-gray-900">
+                    {p.type === "Percentage" ? `${p.value}%` : p.type === "Shipping" ? "Free" : `$${p.value}`}
+                  </td>
+                  <td className="px-4 py-3 text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-16 rounded-full bg-[#eeeeee]">
+                        <div className="h-full rounded-full bg-gray-900" style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="text-[10px] text-gray-400">{p.used}/{p.limit}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-gray-400">{p.starts} – {p.ends}</td>
+                  <td className="px-4 py-3"><Badge status={p.status} /></td>
+                  <td className="px-4 py-3">
+                    <button className="rounded-lg border border-[#eeeeee] px-2.5 py-1 text-[10px] text-gray-600 hover:border-gray-900 hover:text-gray-900 transition">Edit</button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {filtered.length === 0 && (
+          <p className="py-10 text-center text-xs text-gray-400">No promotions match your search.</p>
+        )}
+      </Card>
+    </div>
+  );
+};
+
 // ─── Inventory ────────────────────────────────────────────────────────────────
 const AdminInventory = () => {
   const low     = PRODUCTS.filter(p => p.stock > 0 && p.stock < 10);
@@ -379,8 +784,8 @@ const AdminInventory = () => {
   );
 };
 
-// ─── Users ────────────────────────────────────────────────────────────────────
-const AdminUsers = () => {
+// ─── Customers (Users) ─────────────────────────────────────────────────────────
+const AdminCustomer = () => {
   const [search, setSearch] = useState("");
   const filtered = USERS.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) || u.email.includes(search)
@@ -392,17 +797,17 @@ const AdminUsers = () => {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search user…"
+          placeholder="Search customer…"
           className="rounded-xl border border-[#eeeeee] bg-white px-3.5 py-2 text-xs text-gray-900 outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 w-52"
         />
-        <p className="text-xs text-gray-400">{USERS.length} total users</p>
+        <p className="text-xs text-gray-400">{USERS.length} total customers</p>
       </div>
 
       <Card className="p-0 overflow-hidden">
         <table className="w-full text-xs">
           <thead className="bg-[#f8f8f8] border-b border-[#eeeeee]">
             <tr>
-              {["User","Email","Joined","Orders","Total Spent","Status",""].map(h => (
+              {["Customer","Email","Joined","Orders","Total Spent","Status",""].map(h => (
                 <th key={h} className="px-4 py-3 text-left font-medium text-gray-500">{h}</th>
               ))}
             </tr>
@@ -517,12 +922,16 @@ const AdminDashboard = () => {
   const [section, setSection] = useState("overview");
 
   const SECTIONS = {
-    overview:  <AdminOverview />,
-    orders:    <AdminOrders />,
-    products:  <AdminProducts />,
-    inventory: <AdminInventory />,
-    users:     <AdminUsers />,
-    analytics: <AdminAnalytics />,
+    overview:   <AdminOverview />,
+    ecommerce:  <AdminEcommerce />,
+    orders:     <AdminOrders />,
+    products:   <AdminProducts />,
+    categories: <AdminCategories />,
+    earning:    <AdminEarning />,
+    promotion:  <AdminPromotion />,
+    customer:   <AdminCustomer />,
+    inventory:  <AdminInventory />,
+    analytics:  <AdminAnalytics />,
   };
 
   return (
