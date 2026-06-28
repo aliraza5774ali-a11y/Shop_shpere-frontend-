@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../store/slice/authSlice";
 import NotificationPanel from "../sections/NotificationPanel";
-import buildNotifications from '../NotificationUtilis'
+import {buildNotifications} from '../NotificationUtilis'
 
 // ─── Icons (inline SVG, no dep) ──────────────────────────────────────────────
 const Icon = ({ d, size = 18, className = "" }) => (
